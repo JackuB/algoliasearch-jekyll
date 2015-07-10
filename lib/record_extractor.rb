@@ -26,6 +26,7 @@ class AlgoliaSearchRecordExtractor
   def metadata
     return metadata_page if @file.is_a?(Jekyll::Page)
     return metadata_post if @file.is_a?(Jekyll::Post)
+    return metadata_doc if @file.is_a?(Jekyll::Document)
     {}
   end
 
@@ -58,6 +59,17 @@ class AlgoliaSearchRecordExtractor
       slug: @file.basename
     }
   end
+
+  # Extract metadata from a document
+  def metadata_doc
+    {
+      type: 'document',
+      url: @file.url,
+      title: @file.data['title'],
+      slug: @file.basename
+    }
+  end
+
 
   # Get the list of all HTML nodes to index
   def html_nodes

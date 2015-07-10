@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'algoliasearch-jekyll'
-  s.version     = '0.2.2'
+  s.version     = '0.2.3'
   s.date        = '2015-07-03'
   s.summary     = 'AlgoliaSearch for Jekyll'
   s.description = 'Index all your pages and posts to an Algolia index with ' \

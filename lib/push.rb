@@ -36,12 +36,19 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       if @config['markdown_ext']
         allowed_extensions += @config['markdown_ext'].split(',')
       end
-      current_extension = File.extname(file.name)[1..-1]
+
+      if defined? file.name # Documents don't have name
+        filename = file.name
+      else
+        filename = file.basename
+      end
+
+      current_extension = File.extname(filename)[1..-1]
       return false unless allowed_extensions.include?(current_extension)
 
       # Exclude files manually excluded from config
       excluded_files = @config['algolia']['excluded_files']
-      return false if excluded_files && excluded_files.include?(file.name)
+      return false if excluded_files && excluded_files.include?(filename)
 
       true
     end
@@ -53,6 +60,19 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
       def site.write
         items = []
+
+       # Index collections
+        collections.values.each do |collection|
+          collection.docs.each do |doc|
+            next unless AlgoliaSearchJekyllPush.indexable?(doc)
+            new_items = AlgoliaSearchRecordExtractor.new(doc).extract
+
+            next if new_items.nil?
+            items += new_items
+          end
+        end
+
+        # Index posts
         each_site_file do |file|
           next unless AlgoliaSearchJekyllPush.indexable?(file)
 
